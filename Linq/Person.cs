@@ -10,6 +10,6 @@ namespace Linq
     {
         public string PersonId { get;  private set; }
         public string Name { get; set; }
-        public int MyProperty { get; set; }
+ 
     }
 }

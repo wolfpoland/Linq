@@ -8,6 +8,7 @@ namespace Linq
 {
     class Program
     {
+        delegate void Delegato(string imcio);
         static void Main(string[] args)
         {
             int[] tabo = new[] { 1,9,3,2,6,4,8,7,10 };
@@ -54,12 +55,65 @@ namespace Linq
                 new Car("Solar",Rodzaj.Psazerowy,30000,"Zolty"),
                 new Car("Skuter",Rodzaj.Osobowy,10000,"Pinkowy"),
                 new Car("Renault", Rodzaj.Osobowy,5000,"Zielony"),
-                new Car("Toyota",Rodzaj.Transportowy,15000,"Zielen"),
+                new Car("Toyota",Rodzaj.Osobowy,15000,"Zielen"),
                 new Car("Solar",Rodzaj.Psazerowy,35000,"Zolty")
 
             };
 
             wyswietalnie(garaz);
+            var zap7 = garaz.Where(a => a.Cena < 30000).Where(b => b.Kolor.Equals("Zielony")).Where(c => c.Rodzaj == Rodzaj.Osobowy).ToList();
+            Console.WriteLine("Okreslone zapytanie: ");
+            wyswietalnie(zap7);
+
+            Console.WriteLine("Testowanie: ");
+
+            Delegato del = (string imie) =>
+             {
+                 Console.WriteLine("Witaj : " + imie);
+             };
+            Console.Write("Podaj imie: ");
+            string imcio = Console.ReadLine();
+            del(imcio);
+
+            var zp8 = (from Car in garaz
+                      where Car.Cena > 10000
+                      orderby Car.Cena
+                      select Car).ToList();
+            
+            wyswietalnie(zp8);
+
+            Console.WriteLine("Testowanie Kalkulowania: ");
+            Console.WriteLine("Srednia cena za samochody: {0}",garaz.Average(p=> p.Cena));
+            Console.WriteLine("Minimalna cena za samochod: {0}", garaz.Min(p => p.Cena));
+            Console.WriteLine("Maksymalna cena za samochod: {0}", garaz.Max(p => p.Cena));
+            Console.WriteLine("Na koniec juz ilosc: {0}", garaz.Count);
+            List<Opony> lista = new List<Opony>
+            {
+                new Opony { nazwa="Chujomatakałaki", producent="Jokohama", rozmiar=20 },
+                 new Opony { nazwa="Stoperany", producent="Pierdzielnij", rozmiar=20 },
+                  new Opony { nazwa="Kombajnowe", producent="Trakco", rozmiar=20 }
+            };
+            var fuzja = from Oponka in lista
+                        join Samo in garaz
+                        on Oponka.Rodzaj equals Samo.Rodzaj
+                        select new
+                        {
+                            Samo.Marka,
+                            Samo.Rodzaj,
+                            Samo.Kolor,
+                            Samo.Cena,
+                            Oponka.nazwa,
+                            Oponka.producent,
+                            Oponka.rozmiar
+
+                        };
+
+
+            foreach(var item in fuzja)
+            {
+                Console.WriteLine(item.Marka);
+                Console.WriteLine(item.Marka);
+            }
 
 
 
@@ -95,7 +149,7 @@ namespace Linq
                     max.tmp = item;
                     max.wiadomosc = item.Marka.ToString();
                 }
-                if (item.Kolor.Length > max.Max)
+                if(item.Kolor.Length > max.Max)
                 {
                     max.Max = item.Kolor.Length;
                     max.tmp = item;
@@ -107,7 +161,13 @@ namespace Linq
                     max.tmp = item;
                     max.wiadomosc = item.Rodzaj.ToString();
                 }
-                
+                if (item.Cena.ToString().Length > max.Max)
+                {
+                    max.Max = item.Cena.ToString().Length;
+                    max.tmp = item;
+                    max.wiadomosc = item.Cena.ToString();
+                }
+
             }
             
             Console.WriteLine("Wyswietlam maksa: \n Maksymalan przerwa: {0} \n Car ktory mial przerwe: {1} \n Ta wiadomosc {2} \n",max.Max,max.tmp.ToString(),max.wiadomosc);
@@ -118,6 +178,7 @@ namespace Linq
             string tmp = "";
             string tmp2 = "";
             string tmp3 = "";
+            string tmp4 = "";
             for (int n = 0; n < kreski; n++)
             {
                 Console.Write("-");
@@ -125,15 +186,16 @@ namespace Linq
             Console.WriteLine();
             foreach (Car item in tab)
             {
-                if (item.Marka.ToString().Length < max.Max)
+                if (item.Marka.ToString().Length <= max.Max)
                 {
+                    tmp4 = item.Marka.ToString();
                     roznica = max.Max - item.Marka.ToString().Length;
                     for(int m = 0; m < roznica; m++)
                     {
-                        item.Marka += " ";
+                        tmp4 += " ";
                     }
                 }
-                if (item.Rodzaj.ToString().Length < max.Max)
+                if (item.Rodzaj.ToString().Length <= max.Max)
                 {
                     tmp = item.Rodzaj.ToString();
                     roznica = max.Max - item.Rodzaj.ToString().Length;
@@ -142,7 +204,7 @@ namespace Linq
                         tmp += " ";
                     }
                 }
-                if (item.Cena.ToString().Length < max.Max)
+                if (item.Cena.ToString().Length <= max.Max)
                 {
                     tmp2 = item.Cena.ToString();
                     roznica = max.Max - item.Cena.ToString().Length;
@@ -151,7 +213,7 @@ namespace Linq
                         tmp2 += " ";
                     }
                 }
-                if (item.Kolor.ToString().Length < max.Max)
+                if (item.Kolor.ToString().Length <= max.Max)
                 {
                     tmp3 = item.Kolor.ToString();
                     roznica = max.Max - item.Kolor.ToString().Length;
@@ -160,7 +222,7 @@ namespace Linq
                         tmp3 += " ";
                     }
                 }
-                Console.WriteLine("| {0} | {1} | {2} | {3} | {4} |", no,item.Marka,tmp,tmp2,tmp3);
+                Console.WriteLine("| {0} | {1} | {2} | {3} | {4} |", no,tmp4,tmp,tmp2,tmp3);
                 no++;
             }
             for (int n = 0; n < kreski; n++)
