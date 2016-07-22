@@ -13,9 +13,13 @@ namespace Linq
             Max = 0;
             tmp = new Car();
             wiadomosc = "";
+            tmpF = new Fuzja();
+            
         }
         public int Max { get; set; }
         public Car tmp { get; set; }
+        public Fuzja tmpF { get; set; }
+        public Object obj { get; set; }
         public string wiadomosc { get; set; }
     }
 }

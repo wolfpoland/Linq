@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -93,6 +94,7 @@ namespace Linq
                  new Opony { nazwa="Stoperany", producent="Pierdzielnij", rozmiar=20 },
                   new Opony { nazwa="Kombajnowe", producent="Trakco", rozmiar=20 }
             };
+            List<Fuzja> fu = new List<Fuzja>();
             var fuzja = from Oponka in lista
                         join Samo in garaz
                         on Oponka.Rodzaj equals Samo.Rodzaj
@@ -111,12 +113,18 @@ namespace Linq
 
             foreach(var item in fuzja)
             {
-                Console.WriteLine(item.Marka);
-                Console.WriteLine(item.Marka);
+                Console.WriteLine("Marka: {0} | Rodzaj: {1} | Kolor: {2} | Cena: {3} | Nazwa Opony: {4} | Nazwa producenta: {5} | Rozmiar opony: {6} ",item.Marka,item.Rodzaj,item.Kolor,item.Cena,item.nazwa,item.producent,item.rozmiar);
+                fu.Add(new Fuzja {Marka=item.Marka, Rodzaj=item.Rodzaj, Cena=item.Cena, Kolor=item.Kolor,NazwaOpony=item.nazwa, NazwaProducenta=item.producent, Rozmiar=item.rozmiar });
             }
-
-
-
+            List<object> listka = new List<object>();
+            foreach (var item in fu)
+            {
+                listka.Add(item);
+            }
+      
+            TableMaker(listka);
+            KolejnyTutorial kol = new KolejnyTutorial();
+            
             Console.ReadKey();
         }
         public static void wyswietalnie(int[] tab)
@@ -231,6 +239,62 @@ namespace Linq
             }
             Console.WriteLine();
      
+        }
+        public static void TableMaker(List<object> lista)
+        {
+            Domin max= new Domin();
+        
+            foreach (Object item in lista)
+            {
+        
+               PropertyInfo[] tab= item.GetType().GetProperties();
+
+                foreach(PropertyInfo itemo in tab)
+                {
+                    Console.WriteLine("Porownanie wartosci : "+ itemo.GetValue(item).ToString().Length +"-" +max.Max);
+                    Console.WriteLine(itemo.GetValue(item) + " - " + max.wiadomosc);
+                    if (itemo.GetValue(item).ToString().Length > max.Max)
+                    {
+                        Console.WriteLine("Zaszla zmina");
+                        max.Max = itemo.GetValue(item).ToString().Length;
+                        max.obj = item;
+                        max.wiadomosc = itemo.GetValue(item).ToString();
+                       
+                    }
+                }
+            }
+            Console.WriteLine("Najwieksza wartosc:");
+            Console.WriteLine("Wartosc: {0} | Ilosc liter: {1} ",max.wiadomosc,max.Max);
+            PropertyInfo[] tabp = max.obj.GetType().GetProperties();
+            Console.WriteLine();
+            int kreski = max.Max * tabp.Length;
+            for (int i = 0; i < kreski; i++)
+            {
+                Console.Write("-");
+            }
+            int licznik = 0;
+            List<string> listka = new List<string>();
+            foreach(PropertyInfo item in tabp)
+            {
+                string tmp = item.GetValue(max.obj).ToString();
+                if(tmp.Length< max.Max)
+                {
+                    int roznica = max.Max - tmp.Length;
+                    for(int n = 0; n < roznica; n++)
+                    {
+                        tmp += " ";
+                    }
+                }
+                listka.Add(tmp);
+            }
+            Console.WriteLine("");
+            foreach (string item in listka)
+            {
+            //    Console.Write(" " + + " |");
+
+            }
+               
+            
         }
 
     }
